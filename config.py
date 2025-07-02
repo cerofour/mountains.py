@@ -1,7 +1,7 @@
 from ursina import color
 
 window_color = color.rgb(0.75, 0.52, 0.3)
-WORLD_SIZE = (80, 80, 80)
+WORLD_SIZE = (10, 10, 10)
 CHUNK_SIZE = 16
 CAVE_Y = 16
 MOUNTAIN_Y = 17
