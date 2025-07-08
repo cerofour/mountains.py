@@ -1,4 +1,4 @@
-from ursina import Vec3, Mesh, scene, Entity
+from ursina import Vec3, Mesh, collider, scene, Entity
 from config import WORLD_SIZE, CHUNK_SIZE, CAVE_Y, MOUNTAIN_Y, MAX_MOUNTAIN_HEIGHT
 from utils import get_chunk_coords
 from random import randint
@@ -6,7 +6,7 @@ import perlin_noise
 
 BLOCKS = {}
 CHUNKS = {}
-noise = perlin_noise.PerlinNoise(octaves=10, seed=42)
+noise = perlin_noise.PerlinNoise(octaves=10, seed=4220720)
 
 cube_vertices = [
     Vec3(-0.5, -0.5, -0.5), Vec3(0.5, -0.5, -0.5), Vec3(0.5, 0.5, -0.5), Vec3(-0.5, 0.5, -0.5),
@@ -80,7 +80,8 @@ class Chunk(Entity):
                 Entity(
                     parent=self,
                     model=mesh,
-                    texture=texture
+                    texture=texture,
+                    collider='mesh'
                 )
     
     def create_mesh_for_texture(self, blocks):

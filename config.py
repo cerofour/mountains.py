@@ -1,10 +1,10 @@
 from ursina import color
 
 window_color = color.rgb(0.75, 0.52, 0.3)
-WORLD_SIZE = (80, 80, 80)
+WORLD_SIZE = (100, 16, 100)
 CHUNK_SIZE = 16
-CAVE_Y = 16
-MOUNTAIN_Y = 17
+CAVE_Y = 8
+MOUNTAIN_Y = 16
 SNOW_Y = 60
 MAX_MOUNTAIN_HEIGHT = 80
 grass_texture_path = 'assets/grass.jpg'
