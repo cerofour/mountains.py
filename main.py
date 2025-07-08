@@ -79,8 +79,8 @@ mouse.traverse_target = shootables_parent
 class Enemy(Entity):
     def __init__(self, **kwargs):
         # Use safe model loading for the bot
-        bot_model = load_model_safe('assets/ojito/Robot_Eye.fbx', 'cube')
-        super().__init__(parent=shootables_parent, model=bot_model, scale_y=2, origin_y=-.5, collider='mesh', **kwargs)
+        bot_model = load_model_safe('assets/left_4_dead_2_tank_rig.glb', 'cube')
+        super().__init__(parent=shootables_parent, model=bot_model, scale_y=0.09, rotation=(0, 360, 360), scale_x=0.09, scale_z=0.09, origin_y=-.5, collider='box', **kwargs) # 0.045
         self.health_bar = Entity(parent=self, y=1.2, model='cube', color=color.red, world_scale=(1.5,.1,.1))
         self.max_hp = 100
         self.hp = self.max_hp
@@ -115,7 +115,7 @@ class Enemy(Entity):
         self.health_bar.alpha = 1
 
 # Enemy()
-enemies = [Enemy(x=x*4, position=(player.position + Vec3(random.randint(-5, 5), 0, random.randint(-5, 5)))) for x in range(4)]
+enemies = [Enemy(x=x*4, position=(player.position + Vec3(random.randint(-5, 5), 0, random.randint(-5, 5)))) for x in range(2)]
 #enemies = [Enemy(x=x*4, position=(player.position)) for x in range(4)]
 
 # Información de debug
