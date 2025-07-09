@@ -1,33 +1,8 @@
 from ursina import *
 from ursina.prefabs.first_person_controller import FirstPersonController
-from config import window_color, grass_texture_path, snow_texture_path, stone_texture_path, SNOW_Y, MOUNTAIN_Y, CAVE_Y
-from world import generate_world, CHUNKS, BLOCKS
 from mesh_utils import load_model_safe, create_bot_entity_safe
 
 app = Ursina()
-window.color = window_color
-
-snow_texture = load_texture(snow_texture_path)
-grass_texture = load_texture(grass_texture_path)
-stone_texture = load_texture(stone_texture_path)
-
-def textureMap(y):
-    if y >= SNOW_Y:
-        return snow_texture
-    else:
-        if (y <= CAVE_Y):
-            return stone_texture
-        elif y > CAVE_Y and y <= MOUNTAIN_Y:
-            return grass_texture
-        else:
-            return stone_texture
-
-# Generar mundo
-print("Iniciando generación del mundo...")
-generate_world(textureMap)
-
-# Crear jugador
-# player = OptimizedFirstPersonController()
 
 gun_model = load_model_safe("assets/M9/M9.obj", "cube")
 
@@ -66,7 +41,7 @@ def shoot():
         gun.on_cooldown = True
         gun.muzzle_flash.enabled=True
         from ursina.prefabs.ursfx import ursfx
-        ursfx([(0.0, 0.0), (0.1, 0.9), (0.15, 0.75), (0.3, 0.14), (0.6, 0.0)], volume=0.5, wave='noise', pitch=random.uniform(-13,-12), pitch_change=-12, speed=3.0)
+        ursfx([(0.0, 0.0), (0.1, 0.9), (0.15, 0.75), (0.3, 0.14), (0.6, 0.0)], volume=0.5, wave='noise', pitch=random.uniform(-13.0,-12.0), pitch_change=-12, speed=3.0)
         invoke(gun.muzzle_flash.disable, delay=.05)
         invoke(setattr, gun, 'on_cooldown', False, delay=.15)
         if mouse.hovered_entity and hasattr(mouse.hovered_entity, 'hp'):
@@ -114,9 +89,7 @@ class Enemy(Entity):
         self.health_bar.world_scale_x = self.hp / self.max_hp * 1.5
         self.health_bar.alpha = 1
 
-# Enemy()
 enemies = [Enemy(x=x*4, position=(player.position + Vec3(random.randint(-5, 5), 0, random.randint(-5, 5)))) for x in range(2)]
-#enemies = [Enemy(x=x*4, position=(player.position)) for x in range(4)]
 
 # Información de debug
 def input(key):
@@ -124,8 +97,6 @@ def input(key):
         mouse.locked = not mouse.locked
     elif key == 'f':
         print(f"Posición: {player.position}")
-        print(f"Chunks cargados: {len(CHUNKS)}")
-        print(f"Bloques totales: {len(BLOCKS)}")
 
 print("Mundo cargado. Controles:")
 print("WASD: Movimiento")
