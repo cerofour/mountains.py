@@ -105,9 +105,8 @@ def input(key):
     elif key == 'f':
         print(f"Posición: {player.position}")
 
-image_data = load_image_with_pil("g.png")
+image_data = load_image_with_pil("map1.png")
 generate_world_from_data(image_data, world_blocks, enemy_spawn_points, easter_egg)
-
 
 print("Mundo cargado. Controles:")
 print("WASD: Movimiento")
