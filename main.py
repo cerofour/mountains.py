@@ -5,6 +5,7 @@ from mesh_utils import load_model_safe, create_bot_entity_safe
 app = Ursina()
 
 gun_model = load_model_safe("assets/M9/M9.obj", "cube")
+ground = Entity(model='plane', collider='box', scale=128, texture='grass', texture_scale=(4,4))
 
 tanquesin_obj = "assets/Tanquesin/t_34_obj.obj"
 tanquesin_model = load_model_safe("assets/Tanquesin/t_34_obj.obj", "cube")
