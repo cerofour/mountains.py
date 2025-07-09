@@ -1,11 +1,13 @@
 from ursina import *
 from ursina.prefabs.first_person_controller import FirstPersonController
 from mesh_utils import load_model_safe, create_bot_entity_safe
+from PIL import Image
+import numpy as np
+from map_generator import *
 
 app = Ursina()
 
 gun_model = load_model_safe("assets/M9/M9.obj", "cube")
-ground = Entity(model='plane', collider='box', scale=128, texture='grass', texture_scale=(4,4))
 
 tanquesin_obj = "assets/Tanquesin/t_34_obj.obj"
 tanquesin_model = load_model_safe("assets/Tanquesin/t_34_obj.obj", "cube")
@@ -26,6 +28,10 @@ DirectionalLight(color=color.rgb(0.8, 0.8, 0.8)).look_at(Vec3(1, -1, -1))
 win_text = Text("¡GANASTE!", scale=2, origin=(0,0), background=True)
 win_text.enabled = False
 
+world_blocks = []
+enemy_spawn_points = []
+easter_egg = None
+ 
 def update():
     if held_keys['left mouse']:
         shoot()
@@ -98,6 +104,10 @@ def input(key):
         mouse.locked = not mouse.locked
     elif key == 'f':
         print(f"Posición: {player.position}")
+
+image_data = load_image_with_pil("g.png")
+generate_world_from_data(image_data, world_blocks, enemy_spawn_points, easter_egg)
+
 
 print("Mundo cargado. Controles:")
 print("WASD: Movimiento")
