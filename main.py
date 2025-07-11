@@ -1,22 +1,21 @@
-from ursina import Entity, mouse, held_keys
+from ursina import Entity, mouse, held_keys, color, load_model, Vec3, time
+from direct.actor.Actor import Actor
 from ursina.prefabs.first_person_controller import FirstPersonController
 from mesh_utils import load_model_safe, create_bot_entity_safe
 
 from App import App
-
-# Iluminación
-
+from Enemy import Enemy
 
 app = App()
 player = app.get_player()
 
-ground = Entity(model='plane', collider='box', scale=128, texture='grass', texture_scale=(4,4))
+ground = Entity(model='plane', collider='box', scale=128, texture='grass', texture_scale=(1,1))
+
+e = Enemy(player)
 
 def update():
+    #e.rotation_y += 100 * time.dt
     player.update()
-
-#win_text = Text("¡GANASTE!", scale=2, origin=(0,0), background=True)
-#win_text.enabled = False
 
 # Información de debug
 def input(key):
