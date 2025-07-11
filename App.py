@@ -14,6 +14,9 @@ class App:
 	def get_player(self) -> FPSCamera:
 		return self.player
 
+	def set_player_position(self, pos: Vec3) -> None:
+		self.player.position = pos
+
 	def run(self) -> None:
 		Sky()
 		AmbientLight(color=color.rgb(1.0, 1.0, 1.0))
