@@ -49,8 +49,64 @@ def load_image_with_pil(image_path):
         return None
 
 
+def greedy_mesh_walls(wall_data, block_size=1):
+    """
+    Implementa greedy meshing para los bloques de muro.
+    wall_data: matriz 2D donde True indica la presencia de un muro
+    """
+    height = len(wall_data)
+    width = len(wall_data[0]) if height > 0 else 0
+    
+    # Crear una copia para marcar los bloques ya procesados
+    processed = [[False for _ in range(width)] for _ in range(height)]
+    meshes = []
+    
+    for y in range(height):
+        for x in range(width):
+            if wall_data[y][x] and not processed[y][x]:
+                # Encontrar el rectángulo más grande que comience en (x, y)
+                
+                # Primero, expandir horizontalmente
+                width_extent = 1
+                while (x + width_extent < width and 
+                       wall_data[y][x + width_extent] and 
+                       not processed[y][x + width_extent]):
+                    width_extent += 1
+                
+                # Luego, expandir verticalmente manteniendo el ancho
+                height_extent = 1
+                can_expand_height = True
+                while can_expand_height and y + height_extent < height:
+                    # Verificar si toda la fila puede expandirse
+                    for check_x in range(x, x + width_extent):
+                        if (not wall_data[y + height_extent][check_x] or 
+                            processed[y + height_extent][check_x]):
+                            can_expand_height = False
+                            break
+                    
+                    if can_expand_height:
+                        height_extent += 1
+                
+                # Marcar todos los bloques en el rectángulo como procesados
+                for mesh_y in range(y, y + height_extent):
+                    for mesh_x in range(x, x + width_extent):
+                        processed[mesh_y][mesh_x] = True
+                
+                # Crear el mesh combinado
+                mesh_info = {
+                    'x': x * block_size + (width_extent * block_size - block_size) / 2,
+                    'z': y * block_size + (height_extent * block_size - block_size) / 2,
+                    'width': width_extent * block_size,
+                    'height': height_extent * block_size,
+                    'scale': (width_extent * block_size, 5, height_extent * block_size)
+                }
+                meshes.append(mesh_info)
+    
+    return meshes
+
+
 def generate_world_from_data(image_data, world_blocks, enemy_spawn_points, easter_egg, block_size=1) -> Vec3:
-    """Genera un mundo 3D basado en datos de imagen"""
+    """Genera un mundo 3D basado en datos de imagen con greedy meshing para muros"""
     
     # Mapeo de valores a colores
     color_map = {
@@ -157,24 +213,21 @@ def generate_world_from_data(image_data, world_blocks, enemy_spawn_points, easte
 
     player_spawn = Vec3(0, 0, 0)
 
+    # Crear matriz de muros para greedy meshing
+    wall_data = [[False for _ in range(width)] for _ in range(height)]
+    
+    # Primera pasada: identificar muros y otros bloques
     for y in range(height):
         for x in range(width):
             pixel_value = image_data[y][x]
             
-            if pixel_value in color_map and color_map[pixel_value] is not None:
+            if pixel_value == 3:  # Muro azul
+                wall_data[y][x] = True
+            elif pixel_value in color_map and color_map[pixel_value] is not None:
                 block = None
-                if (pixel_value == 5):
+                if pixel_value == 5:  # Spawn point
                     player_spawn = Vec3(x * block_size, 0, y * block_size)
-
-                if (pixel_value == 3):
-                    block = Entity(model='cube', origin_y=-0.5, texture='brick', texture_scale=(1,2),
-                        x=x * block_size,
-                        z=y * block_size,
-                        collider='box',
-                        scale=(block_size, 5, block_size),
-                        color=color.blue
-                    )
-                elif (pixel_value == 2):
+                elif pixel_value == 2:  # Easter egg
                     block = Entity(
                         model='cube',
                         origin_y=-0.5,
@@ -183,10 +236,10 @@ def generate_world_from_data(image_data, world_blocks, enemy_spawn_points, easte
                         z=y * block_size,
                         color=color_map[pixel_value],
                         collider='box',
-                        scale=(block_size, 1, block_size), #scale=block_size
+                        scale=(block_size, 1, block_size),
                     )
                     easter_egg = block
-                elif (pixel_value == 1):
+                elif pixel_value == 1:  # Enemy spawn
                     block = Entity(
                         model='cube',
                         origin_y=-0.5,
@@ -198,8 +251,30 @@ def generate_world_from_data(image_data, world_blocks, enemy_spawn_points, easte
                         scale=(block_size, 1, block_size),
                     )
                     enemy_spawn_points.append(block)
-            
-                world_blocks.append(block)
+                
+                if block:
+                    world_blocks.append(block)
     
-    print(f"Mundo generado con {len(world_blocks)} bloques")
+    # Aplicar greedy meshing a los muros
+    wall_meshes = greedy_mesh_walls(wall_data, block_size)
+    
+    print(f"Creando {len(wall_meshes)} meshes optimizados para muros (antes: {sum(sum(row) for row in wall_data)} bloques individuales)")
+    
+    # Crear las entidades de muro optimizadas
+    for mesh in wall_meshes:
+        wall_block = Entity(
+            model='cube',
+            origin_y=-0.5,
+            texture='brick',
+            x=mesh['x'],
+            z=mesh['z'],
+            collider='box',
+            scale=mesh['scale'],
+            color=color.blue,
+            # Ajustar escala de textura basada en el tamaño del mesh
+            texture_scale=(mesh['width']/2, mesh['height']/2)
+        )
+        world_blocks.append(wall_block)
+    
+    print(f"Mundo generado con {len(world_blocks)} bloques (incluyendo meshes optimizados)")
     return player_spawn
