@@ -76,7 +76,7 @@ def generate_world_from_data(image_data, world_blocks, enemy_spawn_points, easte
         texture_scale=(width/4, height/4),  # Escalar textura proporcionalmente
         color=color.light_gray
     )
-    '''
+
     ceiling = Entity(
         model='plane',
         collider='box',
@@ -89,7 +89,8 @@ def generate_world_from_data(image_data, world_blocks, enemy_spawn_points, easte
         texture_scale=(width/4, height/4),  # Escalar textura proporcionalmente
         color=color.light_gray
     )
-    '''
+    world_blocks.append(ceiling)
+    
 
     wall_height = 5
     wall_thickness = 0.5

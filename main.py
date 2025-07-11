@@ -18,7 +18,7 @@ player.collider = BoxCollider(player, Vec3(0,1,0), Vec3(1,2,1))
 gun = Entity(model='cube', parent=camera, position=(.5,-.25,.25), scale=(.3,.2,1), origin_z=-.5, color=color.red, on_cooldown=False)
 gun.muzzle_flash = Entity(parent=gun, z=1, world_scale=.5, model='quad', color=color.yellow, enabled=False)
 
-player.position = (1, 15.5, 1)
+player.position = (4, 2, 1)
 # player.gravity = 0
 
 # Iluminación
@@ -96,7 +96,7 @@ class Enemy(Entity):
         self.health_bar.world_scale_x = self.hp / self.max_hp * 1.5
         self.health_bar.alpha = 1
 
-enemies = [Enemy(x=x*4, position=(player.position + Vec3(random.randint(-5, 5), 0, random.randint(-5, 5)))) for x in range(2)]
+enemies = [Enemy(x=x*4, position=(player.position + Vec3(random.randint(-5, 5), 0, random.randint(-5, 5)))) for x in range(0)]
 
 # Información de debug
 def input(key):
